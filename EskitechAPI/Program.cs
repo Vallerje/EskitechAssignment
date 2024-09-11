@@ -1,7 +1,13 @@
 using EskitechAPI.Data;
+using EskitechAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register services
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<InventoryService>();
+builder.Services.AddScoped<PriceService>();
 
 // Lägg till SQLite-konfiguration
 builder.Services.AddDbContext<EskitechContext>(options =>
