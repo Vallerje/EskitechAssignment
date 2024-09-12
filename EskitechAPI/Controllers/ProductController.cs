@@ -9,6 +9,7 @@ namespace EskitechAPI.Controllers
     {
         private readonly ProductService _productService;
 
+        // Constructor to inject ProductService dependency
         public ProductController(ProductService productService)
         {
             _productService = productService;
