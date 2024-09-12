@@ -34,7 +34,7 @@ namespace EskitechAPI.Controllers
 
             return Ok(product);
         }
-        
+
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
@@ -53,7 +53,7 @@ namespace EskitechAPI.Controllers
 
             return NoContent();
         }
-        
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {

@@ -47,6 +47,7 @@ namespace EskitechAPI.Services
                 {
                     return false; // Inventory not found
                 }
+
                 throw; // Re-throw the exception to be handled at a higher level
             }
         }

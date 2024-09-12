@@ -36,7 +36,8 @@ namespace EskitechAPI.Controllers
         {
             // Add new inventory record
             var createdInventory = await _inventoryService.AddInventoryAsync(inventory);
-            return CreatedAtAction(nameof(GetInventory), new { productId = createdInventory.ProductId }, createdInventory);
+            return CreatedAtAction(nameof(GetInventory), new { productId = createdInventory.ProductId },
+                createdInventory);
         }
 
         // PUT: api/inventory/{id}
@@ -52,7 +53,7 @@ namespace EskitechAPI.Controllers
 
             return NoContent();
         }
-        
+
         // DELETE: api/inventory/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInventory(int id)

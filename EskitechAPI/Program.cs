@@ -9,6 +9,9 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<InventoryService>();
 builder.Services.AddScoped<PriceService>();
 
+// Registrera ImportService för DI-container
+builder.Services.AddScoped<ImportExcelService>();
+
 // Lägg till SQLite-konfiguration
 builder.Services.AddDbContext<EskitechContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EskitechDatabase")));
