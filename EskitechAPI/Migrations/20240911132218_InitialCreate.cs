@@ -25,7 +25,7 @@ namespace EskitechAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Iventory",
+                name: "Inventory",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -37,7 +37,7 @@ namespace EskitechAPI.Migrations
                 {
                     table.PrimaryKey("PK_Iventory", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Iventory_Products_ProductId",
+                        name: "FK_Inventory_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -65,8 +65,8 @@ namespace EskitechAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Iventory_ProductId",
-                table: "Iventory",
+                name: "IX_Inventory_ProductId",
+                table: "Inventory",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
@@ -79,7 +79,7 @@ namespace EskitechAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Iventory");
+                name: "Inventory");
 
             migrationBuilder.DropTable(
                 name: "Price");

@@ -32,7 +32,7 @@ namespace EskitechAPI.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Iventory");
+                    b.ToTable("Inventory");
                 });
 
             modelBuilder.Entity("Price", b =>
