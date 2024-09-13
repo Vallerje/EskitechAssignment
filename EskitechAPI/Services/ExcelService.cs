@@ -8,11 +8,11 @@ using EskitechAPI.Data;
 
 namespace EskitechAPI.Services
 {
-    public class ImportExcelService
+    public class ExcelService
     {
         private readonly EskitechContext _context;
 
-        public ImportExcelService(EskitechContext context)
+        public ExcelService(EskitechContext context)
         {
             _context = context;
         }
@@ -36,11 +36,11 @@ namespace EskitechAPI.Services
             using (var package = new ExcelPackage(new FileInfo(filePath)))
             {
                 ExcelWorksheet productSheet = package.Workbook.Worksheets["Products"];
-                /*ExcelWorksheet inventorySheet = package.Workbook.Worksheets["Inventories"];
-                ExcelWorksheet priceSheet = package.Workbook.Worksheets["Prices"];*/
+                ExcelWorksheet inventorySheet = package.Workbook.Worksheets["Inventories"];
+                ExcelWorksheet priceSheet = package.Workbook.Worksheets["Prices"];
 
                 // Validate that worksheets exist
-                if (productSheet == null /*|| inventorySheet == null || priceSheet == null*/)
+                if (productSheet == null || inventorySheet == null || priceSheet == null)
                     throw new InvalidOperationException("Required worksheets are missing in the Excel file.");
 
                 // Read product data
@@ -53,7 +53,7 @@ namespace EskitechAPI.Services
                     });
                 }
 
-                /*// Read inventory data
+                // Read inventory data
                 for (int row = 2; row <= inventorySheet.Dimension.End.Row; row++)
                 {
                     inventories.Add(new Inventory
@@ -71,7 +71,7 @@ namespace EskitechAPI.Services
                         ProductId = int.Parse(priceSheet.Cells[row, 1].Text),
                         Amount = decimal.Parse(priceSheet.Cells[row, 2].Text)
                     });
-                }*/
+                }
             }
 
             // Save data to the database

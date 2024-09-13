@@ -5,13 +5,13 @@ namespace EskitechAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ImportExcelController : ControllerBase
+    public class ExcelController : ControllerBase
     {
-        private readonly ImportExcelService _importService;
+        private readonly ExcelService _service;
 
-        public ImportExcelController(ImportExcelService importExcelService)
+        public ExcelController(ExcelService excelService)
         {
-            _importService = importExcelService;
+            _service = excelService;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace EskitechAPI.Controllers
                 }
 
                 // Call the import service to process the Excel file
-                await _importService.ImportDataFromExcelAsync(filePath);
+                await _service.ImportDataFromExcelAsync(filePath);
 
                 return Ok("Data successfully imported.");
             }

@@ -8,9 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<InventoryService>();
 builder.Services.AddScoped<PriceService>();
+builder.Services.AddScoped<ExcelService>();
 
 // Registrera ImportService för DI-container
-builder.Services.AddScoped<ImportExcelService>();
+builder.Services.AddScoped<ExcelService>();
 
 // Lägg till SQLite-konfiguration
 builder.Services.AddDbContext<EskitechContext>(options =>
