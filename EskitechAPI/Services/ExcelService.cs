@@ -17,11 +17,8 @@ namespace EskitechAPI.Services
             _context = context;
         }
 
-        /// <summary>
-        /// Imports data from an Excel file to the database.
-        /// </summary>
-        /// <param name="filePath">The path to the Excel file.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
+        
+        //importerar data från en excel fil in till database
         public async Task ImportDataFromExcelAsync(string filePath)
         {
             // Ensure the file exists
@@ -32,18 +29,18 @@ namespace EskitechAPI.Services
             var inventories = new List<Inventory>();
             var prices = new List<Price>();
 
-            // Read data from the Excel file
+            // Läser data från excel filen
             using (var package = new ExcelPackage(new FileInfo(filePath)))
             {
                 ExcelWorksheet productSheet = package.Workbook.Worksheets["Products"];
                 ExcelWorksheet inventorySheet = package.Workbook.Worksheets["Inventories"];
                 ExcelWorksheet priceSheet = package.Workbook.Worksheets["Prices"];
 
-                // Validate that worksheets exist
+                // validerar att worksheets finns
                 if (productSheet == null || inventorySheet == null || priceSheet == null)
                     throw new InvalidOperationException("Required worksheets are missing in the Excel file.");
 
-                // Read product data
+                // Läser produkt data
                 for (int row = 2; row <= productSheet.Dimension.End.Row; row++)
                 {
                     products.Add(new Product
@@ -53,7 +50,7 @@ namespace EskitechAPI.Services
                     });
                 }
 
-                // Read inventory data
+                // läser inventory data
                 for (int row = 2; row <= inventorySheet.Dimension.End.Row; row++)
                 {
                     inventories.Add(new Inventory
@@ -63,7 +60,7 @@ namespace EskitechAPI.Services
                     });
                 }
 
-                // Read price data
+                // läser pris data
                 for (int row = 2; row <= priceSheet.Dimension.End.Row; row++)
                 {
                     prices.Add(new Price
@@ -74,17 +71,12 @@ namespace EskitechAPI.Services
                 }
             }
 
-            // Save data to the database
+            // Sparar data till databasen
             await SaveDataToDatabaseAsync(products, inventories, prices);
         }
 
-        /// <summary>
-        /// Saves imported data to the database.
-        /// </summary>
-        /// <param name="products">The list of products.</param>
-        /// <param name="inventories">The list of inventories.</param>
-        /// <param name="prices">The list of prices.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
+        
+        //sparar viktig data till databasen
         private async Task SaveDataToDatabaseAsync(List<Product> products, List<Inventory> inventories, List<Price> prices)
         {
             try

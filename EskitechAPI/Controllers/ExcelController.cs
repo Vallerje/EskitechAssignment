@@ -14,12 +14,10 @@ namespace EskitechAPI.Controllers
             _service = excelService;
         }
 
-        /// <summary>
-        /// Endpoint to import data from an uploaded Excel file.
-        /// </summary>
-        /// <param name="file">The uploaded Excel file.</param>
-        /// <returns>An IActionResult representing the result of the import operation.</returns>
-        [HttpPost("excel")]
+        
+        //Endpoint för att importera data från den uppladdade excel filen
+
+        [HttpPost("importExcel")]
         public async Task<IActionResult> ImportExcelData(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -29,14 +27,14 @@ namespace EskitechAPI.Controllers
 
             try
             {
-                // Save the file temporarily
+                // sparar filen temporärt
                 var filePath = Path.GetTempFileName();
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
 
-                // Call the import service to process the Excel file
+                //    // kallar på import servicen för att bearbeta excel filen
                 await _service.ImportDataFromExcelAsync(filePath);
 
                 return Ok("Data successfully imported.");

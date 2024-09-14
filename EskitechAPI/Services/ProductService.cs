@@ -13,6 +13,7 @@ namespace EskitechAPI.Services
             _context = context;
         }
 
+        // Hämtar alla produkter
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             return await _context.Products.ToListAsync();
@@ -32,6 +33,7 @@ namespace EskitechAPI.Services
             return product;
         }
 
+        /*
         // Uppdatera en befintlig produkt
         public async Task<bool> UpdateProductAsync(int id, Product product)
         {
@@ -55,7 +57,7 @@ namespace EskitechAPI.Services
                 }
                 throw; // Om annat fel, kasta undantaget vidare
             }
-        }
+        }*/
 
         // Ta bort en produkt baserat på dess ID
         public async Task<bool> DeleteProductAsync(int id)

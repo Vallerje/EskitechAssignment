@@ -9,12 +9,21 @@ namespace EskitechAPI.Controllers
     {
         private readonly PriceService _priceService;
 
-        // Constructor to inject PriceService dependency
         public PriceController(PriceService priceService)
         {
             _priceService = priceService;
         }
+        
+        //Hämtar alla priser
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Product>>> GetPrices()
+        {
+            var products = await _priceService.GetPricesAsync();
+            return Ok(products);
+        }
 
+
+        // Hämtar pris genom productId
         [HttpGet("{productId}")]
         public async Task<ActionResult<Price>> GetPrice(int productId)
         {
@@ -28,6 +37,7 @@ namespace EskitechAPI.Controllers
             return Ok(price);
         }
 
+        // Lägger till nytt pris 
         [HttpPost]
         public async Task<ActionResult<Price>> PostPrice(Price price)
         {
@@ -35,18 +45,7 @@ namespace EskitechAPI.Controllers
             return CreatedAtAction(nameof(GetPrice), new { productId = createdPrice.ProductId }, createdPrice);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPrice(int id, Price price)
-        {
-            var success = await _priceService.UpdatePriceAsync(id, price);
-            if (!success)
-            {
-                return BadRequest();
-            }
-
-            return NoContent();
-        }
-        
+        // Tar bort pris
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePrice(int id)
         {

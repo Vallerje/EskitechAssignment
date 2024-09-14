@@ -8,13 +8,13 @@ namespace EskitechAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ProductService _productService;
-
-        // Constructor to inject ProductService dependency
+        
         public ProductController(ProductService productService)
         {
             _productService = productService;
         }
 
+        //Hämtar alla produkter
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
@@ -22,6 +22,7 @@ namespace EskitechAPI.Controllers
             return Ok(products);
         }
 
+        // Hämtar produkt genom productId
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -35,6 +36,7 @@ namespace EskitechAPI.Controllers
             return Ok(product);
         }
 
+        // Lägger till ny produkt 
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
@@ -42,7 +44,8 @@ namespace EskitechAPI.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = createdProduct.Id }, createdProduct);
         }
 
-        [HttpPut("{id}")]
+        //uppdaterar befintlig produkt
+        /*[HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
             var success = await _productService.UpdateProductAsync(id, product);
@@ -52,8 +55,9 @@ namespace EskitechAPI.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
+        // Tar bort produkt
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {

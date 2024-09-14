@@ -12,6 +12,14 @@ namespace EskitechAPI.Services
             _context = context;
         }
 
+        
+        //hämtar alla priser
+        public async Task<IEnumerable<Price>> GetPricesAsync()
+        {
+            return await _context.Prices.ToListAsync();
+        }
+        
+        
         // Hämta pris baserat på produkt-ID
         public async Task<Price> GetPriceByProductIdAsync(int productId)
         {
@@ -26,30 +34,6 @@ namespace EskitechAPI.Services
             return price;
         }
 
-        // Uppdatera ett befintligt pris
-        public async Task<bool> UpdatePriceAsync(int id, Price price)
-        {
-            if (id != price.Id)
-            {
-                return false; // Returnerar false om ID inte matchar
-            }
-
-            _context.Entry(price).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _context.Prices.AnyAsync(p => p.Id == id))
-                {
-                    return false; // Pris hittades inte
-                }
-                throw; // Om annat fel, kasta undantaget vidare
-            }
-        }
 
         // Ta bort ett pris baserat på dess ID
         public async Task<bool> DeletePriceAsync(int id)

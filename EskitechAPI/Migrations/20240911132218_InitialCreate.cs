@@ -25,7 +25,7 @@ namespace EskitechAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Inventory",
+                name: "Inventories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -45,7 +45,7 @@ namespace EskitechAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Price",
+                name: "Prices",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)

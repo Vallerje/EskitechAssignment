@@ -13,6 +13,8 @@ builder.Services.AddScoped<ExcelService>();
 // Registrera ImportService för DI-container
 builder.Services.AddScoped<ExcelService>();
 
+/*builder.Services.AddSingleton<IConfiguration>(builder.Configuration);*/
+
 // Lägg till SQLite-konfiguration
 builder.Services.AddDbContext<EskitechContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EskitechDatabase")));
@@ -37,5 +39,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+/*app.UseMiddleware<ApiKeyMiddleware>();*/
 
 app.Run();
