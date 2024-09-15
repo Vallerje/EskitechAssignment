@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EskitechAPI.Migrations
 {
     [DbContext(typeof(EskitechContext))]
-    [Migration("20240911132218_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240915143827_InitialCreate2")]
+    partial class InitialCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,7 @@ namespace EskitechAPI.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Iventory");
+                    b.ToTable("Inventories");
                 });
 
             modelBuilder.Entity("Price", b =>
@@ -52,9 +52,10 @@ namespace EskitechAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .IsUnique();
 
-                    b.ToTable("Price");
+                    b.ToTable("Prices");
                 });
 
             modelBuilder.Entity("Product", b =>
@@ -79,7 +80,7 @@ namespace EskitechAPI.Migrations
             modelBuilder.Entity("Inventory", b =>
                 {
                     b.HasOne("Product", "Product")
-                        .WithMany()
+                        .WithMany("Inventories")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -89,13 +90,19 @@ namespace EskitechAPI.Migrations
 
             modelBuilder.Entity("Price", b =>
                 {
-                    b.HasOne("Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
+                    b.HasOne("Product", null)
+                        .WithOne("Price")
+                        .HasForeignKey("Price", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Product");
+            modelBuilder.Entity("Product", b =>
+                {
+                    b.Navigation("Inventories");
+
+                    b.Navigation("Price")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

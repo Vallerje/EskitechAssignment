@@ -5,7 +5,7 @@
 namespace EskitechAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreate2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,9 +35,9 @@ namespace EskitechAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Iventory", x => x.Id);
+                    table.PrimaryKey("PK_Inventories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Inventory_Products_ProductId",
+                        name: "FK_Inventories_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -55,9 +55,9 @@ namespace EskitechAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Price", x => x.Id);
+                    table.PrimaryKey("PK_Prices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Price_Products_ProductId",
+                        name: "FK_Prices_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -65,24 +65,25 @@ namespace EskitechAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventory_ProductId",
-                table: "Inventory",
+                name: "IX_Inventories_ProductId",
+                table: "Inventories",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Price_ProductId",
-                table: "Price",
-                column: "ProductId");
+                name: "IX_Prices_ProductId",
+                table: "Prices",
+                column: "ProductId",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Inventory");
+                name: "Inventories");
 
             migrationBuilder.DropTable(
-                name: "Price");
+                name: "Prices");
 
             migrationBuilder.DropTable(
                 name: "Products");
