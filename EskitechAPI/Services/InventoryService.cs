@@ -21,17 +21,27 @@ namespace EskitechAPI.Services
         {
             return await _context.Inventories.ToListAsync();
         }
-        
-// Method to get an inventory by Id
+
+        // Method to get an inventory by Id
         public async Task<Inventory> GetInventoryByIdAsync(int id)
         {
             return await _context.Inventories.FindAsync(id);
         }
 
-
         // Method to add a new inventory
         public async Task<Inventory> AddInventoryAsync(Inventory inventory)
         {
+            if (inventory == null)
+            {
+                throw new ArgumentNullException(nameof(inventory), "Inventory cannot be null.");
+            }
+
+            // Check if the ProductId exists in the Products table
+            if (!await ProductExistsAsync(inventory.ProductId))
+            {
+                throw new KeyNotFoundException("Product with the given ProductId does not exist.");
+            }
+
             _context.Inventories.Add(inventory);
             await _context.SaveChangesAsync();
             return inventory;

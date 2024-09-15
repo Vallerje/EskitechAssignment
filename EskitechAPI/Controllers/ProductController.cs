@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using EskitechAPI.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EskitechAPI.Controllers
 {
@@ -8,13 +10,14 @@ namespace EskitechAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ProductService _productService;
-        
+
+        // Constructor to inject ProductService
         public ProductController(ProductService productService)
         {
             _productService = productService;
         }
 
-        //Hämtar alla produkter
+        // GET: api/Product
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProductsAsync()
         {
@@ -30,44 +33,71 @@ namespace EskitechAPI.Controllers
 
             if (product == null)
             {
-                return NotFound();
+                return NotFound(); // Return 404 if product not found
             }
 
             return Ok(product);
         }
 
-        // Lägger till ny produkt 
+        // POST: api/Product
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProductAsync(Product product)
+        public async Task<ActionResult<Product>> PostProductAsync([FromBody] Product product)
         {
-            var createdProduct = await _productService.AddProductAsync(product);
-            return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createdProduct.Id }, createdProduct);
-        }
-
-        //uppdaterar befintlig produkt
-        /*[HttpPut("{id}")]
-        public async Task<IActionResult> PutProductAsync(int id, Product product)
-        {
-            var success = await _productService.UpdateProductAsync(id, product);
-            if (!success)
+            if (product == null)
             {
-                return BadRequest();
+                return BadRequest("Product cannot be null."); // Return 400 if input is invalid
             }
 
-            return NoContent();
-        }*/
+            try
+            {
+                var createdProduct = await _productService.AddProductAsync(product);
+                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createdProduct.Id }, createdProduct);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message); // Return 400 if input is invalid
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); // Return 500 for unexpected errors
+            }
+        }
 
-        // Tar bort produkt
+        // PUT: api/Product/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProductAsync(int id, [FromBody] Product product)
+        {
+            if (product == null || id != product.Id)
+            {
+                return BadRequest("Product data is invalid."); // Return 400 if input is invalid
+            }
+
+            try
+            {
+                var success = await _productService.UpdateProductAsync(id, product);
+                if (!success)
+                {
+                    return NotFound(); // Return 404 if product to update not found
+                }
+                return NoContent(); // Return 204 No Content on successful update
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); // Return 500 for unexpected errors
+            }
+        }
+
+        // DELETE: api/Product/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductAsync(int id)
         {
             var success = await _productService.DeleteProductAsync(id);
             if (!success)
             {
-                return NotFound();
+                return NotFound(); // Return 404 if product to delete not found
             }
 
-            return NoContent();
+            return NoContent(); // Return 204 No Content on successful deletion
         }
     }
 }
