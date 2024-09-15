@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using OfficeOpenXml; // EPPlus namespace
+using OfficeOpenXml; 
 using EskitechAPI.Data;
 
 namespace EskitechAPI.Services
@@ -21,7 +21,7 @@ namespace EskitechAPI.Services
         //importerar data från en excel fil in till database
         public async Task ImportDataFromExcelAsync(string filePath)
         {
-            // Ensure the file exists
+            // Checkar att filen existerar
             if (!File.Exists(filePath))
                 throw new FileNotFoundException("Excel file not found.", filePath);
 
@@ -74,7 +74,6 @@ namespace EskitechAPI.Services
             // Sparar data till databasen
             await SaveDataToDatabaseAsync(products, inventories, prices);
         }
-
         
         //sparar viktig data till databasen
         private async Task SaveDataToDatabaseAsync(List<Product> products, List<Inventory> inventories, List<Price> prices)
