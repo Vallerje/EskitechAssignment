@@ -29,14 +29,21 @@ namespace EskitechAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProductByIdAsync(int id)
         {
-            var product = await _productService.GetProductByIdAsync(id);
-
-            if (product == null)
+            try
             {
-                return NotFound(); // Return 404 if product not found
-            }
+                var product = await _productService.GetProductByIdAsync(id);
 
-            return Ok(product);
+                if (product == null)
+                {
+                    return NotFound("Product with the given Id does not exist.");
+                }
+
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving the product: {ex.Message}");
+            }
         }
 
         // POST: api/Product
@@ -45,7 +52,7 @@ namespace EskitechAPI.Controllers
         {
             if (product == null)
             {
-                return BadRequest("Product cannot be null."); // Return 400 if input is invalid
+                return BadRequest("Product cannot be null.");
             }
 
             try
@@ -55,11 +62,11 @@ namespace EskitechAPI.Controllers
             }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(ex.Message); // Return 400 if input is invalid
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message); // Return 500 for unexpected errors
+                return StatusCode(500, $"An error occurred while adding the product: {ex.Message}");
             }
         }
 
@@ -67,9 +74,9 @@ namespace EskitechAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProductAsync(int id, [FromBody] Product product)
         {
-            if (product == null || id != product.Id)
+            if (product == null)
             {
-                return BadRequest("Product data is invalid."); // Return 400 if input is invalid
+                return BadRequest("Product cannot be null.");
             }
 
             try
@@ -77,13 +84,18 @@ namespace EskitechAPI.Controllers
                 var success = await _productService.UpdateProductAsync(id, product);
                 if (!success)
                 {
-                    return NotFound(); // Return 404 if product to update not found
+                    return NotFound("Product with the given Id does not exist.");
                 }
+
                 return NoContent(); // Return 204 No Content on successful update
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message); // Return 500 for unexpected errors
+                return StatusCode(500, $"An error occurred while updating the product: {ex.Message}");
             }
         }
 
@@ -91,13 +103,24 @@ namespace EskitechAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductAsync(int id)
         {
-            var success = await _productService.DeleteProductAsync(id);
-            if (!success)
+            try
             {
-                return NotFound(); // Return 404 if product to delete not found
-            }
+                var success = await _productService.DeleteProductAsync(id);
+                if (!success)
+                {
+                    return NotFound("Product with the given Id does not exist.");
+                }
 
-            return NoContent(); // Return 204 No Content on successful deletion
+                return NoContent(); // Return 204 No Content on successful deletion
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the product: {ex.Message}");
+            }
         }
     }
 }

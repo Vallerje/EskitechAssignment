@@ -29,14 +29,21 @@ namespace EskitechAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Inventory>> GetInventoryByIdAsync(int id)
         {
-            var inventory = await _inventoryService.GetInventoryByIdAsync(id);
-
-            if (inventory == null)
+            try
             {
-                return NotFound(); // Return 404 if inventory not found
-            }
+                var inventory = await _inventoryService.GetInventoryByIdAsync(id);
 
-            return Ok(inventory);
+                if (inventory == null)
+                {
+                    return NotFound("Inventory with the given Id does not exist.");
+                }
+
+                return Ok(inventory);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving the inventory: {ex.Message}");
+            }
         }
 
         // POST: api/Inventory
@@ -45,7 +52,7 @@ namespace EskitechAPI.Controllers
         {
             if (inventory == null)
             {
-                return BadRequest("Inventory cannot be null."); // Return 400 if input is invalid
+                return BadRequest("Inventory cannot be null.");
             }
 
             try
@@ -53,17 +60,17 @@ namespace EskitechAPI.Controllers
                 var createdInventory = await _inventoryService.AddInventoryAsync(inventory);
                 return CreatedAtAction(nameof(GetInventoryByIdAsync), new { id = createdInventory.Id }, createdInventory);
             }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message); // Return 404 if product not found
-            }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(ex.Message); // Return 400 if input is invalid
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message); // Return 500 for unexpected errors
+                return StatusCode(500, $"An error occurred while adding the inventory: {ex.Message}");
             }
         }
 
@@ -71,13 +78,19 @@ namespace EskitechAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInventoryAsync(int id)
         {
-            var success = await _inventoryService.DeleteInventoryAsync(id);
-            if (!success)
+            try
             {
-                return NotFound(); // Return 404 if inventory to delete not found
+                var success = await _inventoryService.DeleteInventoryAsync(id);
+                return NoContent(); // Return 204 No Content on successful deletion
             }
-
-            return NoContent(); // Return 204 No Content on successful deletion
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the inventory: {ex.Message}");
+            }
         }
     }
 }

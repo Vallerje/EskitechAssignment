@@ -29,14 +29,21 @@ namespace EskitechAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Price>> GetPriceByIdAsync(int id)
         {
-            var price = await _priceService.GetPriceByIdAsync(id);
-
-            if (price == null)
+            try
             {
-                return NotFound(); // Return 404 if price not found
-            }
+                var price = await _priceService.GetPriceByIdAsync(id);
 
-            return Ok(price);
+                if (price == null)
+                {
+                    return NotFound("Price with the given Id does not exist.");
+                }
+
+                return Ok(price);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving the price: {ex.Message}");
+            }
         }
 
         // POST: api/Price
@@ -45,7 +52,7 @@ namespace EskitechAPI.Controllers
         {
             if (price == null)
             {
-                return BadRequest("Price cannot be null."); // Return 400 if input is invalid
+                return BadRequest("Price cannot be null.");
             }
 
             try
@@ -53,17 +60,17 @@ namespace EskitechAPI.Controllers
                 var createdPrice = await _priceService.AddPriceAsync(price);
                 return CreatedAtAction(nameof(GetPriceByIdAsync), new { id = createdPrice.Id }, createdPrice);
             }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message); // Return 404 if product not found
-            }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(ex.Message); // Return 400 if input is invalid
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message); // Return 500 for unexpected errors
+                return StatusCode(500, $"An error occurred while adding the price: {ex.Message}");
             }
         }
 
@@ -71,13 +78,19 @@ namespace EskitechAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePriceAsync(int id)
         {
-            var success = await _priceService.DeletePriceAsync(id);
-            if (!success)
+            try
             {
-                return NotFound(); // Return 404 if price to delete not found
+                var success = await _priceService.DeletePriceAsync(id);
+                return NoContent(); // Return 204 No Content on successful deletion
             }
-
-            return NoContent(); // Return 204 No Content on successful deletion
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the price: {ex.Message}");
+            }
         }
     }
 }

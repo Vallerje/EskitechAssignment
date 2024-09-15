@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using EskitechAPI.Data;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace EskitechAPI.Services
 {
@@ -19,7 +17,7 @@ namespace EskitechAPI.Services
         {
             return await _context.Products.ToListAsync();
         }
-
+        
         // Method to get a product by Id
         public async Task<Product> GetProductByIdAsync(int id)
         {
@@ -44,7 +42,7 @@ namespace EskitechAPI.Services
         {
             if (id != product.Id)
             {
-                return false; // Return false if IDs do not match
+                throw new ArgumentException("Product ID in the URL does not match the ID in the body.");
             }
 
             _context.Entry(product).State = EntityState.Modified;
@@ -58,13 +56,9 @@ namespace EskitechAPI.Services
             {
                 if (!await _context.Products.AnyAsync(p => p.Id == id))
                 {
-                    return false; // Product not found
+                    throw new KeyNotFoundException("Product with the given Id does not exist.");
                 }
-                throw; // Re-throw other concurrency issues
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while updating the product.", ex);
+                throw;
             }
         }
 
@@ -74,18 +68,12 @@ namespace EskitechAPI.Services
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
-                return false; // Product not found
+                throw new KeyNotFoundException("Product with the given Id does not exist.");
             }
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return true;
-        }
-
-        // Method to check if a Product exists
-        public async Task<bool> ProductExistsAsync(int productId)
-        {
-            return await _context.Products.AnyAsync(p => p.Id == productId);
         }
     }
 }

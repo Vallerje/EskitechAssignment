@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using EskitechAPI.Data;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace EskitechAPI.Services
 {
@@ -34,10 +32,11 @@ namespace EskitechAPI.Services
                 throw new ArgumentNullException(nameof(price), "Price cannot be null.");
             }
 
-            // Check if the ProductId exists in the Products table
-            if (!await ProductExistsAsync(price.ProductId))
+            // Ensure that the Product exists
+            var productExists = await ProductExistsAsync(price.ProductId);
+            if (!productExists)
             {
-                throw new KeyNotFoundException("Product with the given ProductId does not exist.");
+                throw new InvalidOperationException("Product with the given ProductId does not exist.");
             }
 
             _context.Prices.Add(price);
@@ -45,13 +44,13 @@ namespace EskitechAPI.Services
             return price;
         }
 
-        // Method to delete a price by its Id
+        // Method to delete a price by Id
         public async Task<bool> DeletePriceAsync(int id)
         {
             var price = await _context.Prices.FindAsync(id);
             if (price == null)
             {
-                return false; // Price not found
+                throw new KeyNotFoundException("Price with the given Id does not exist.");
             }
 
             _context.Prices.Remove(price);

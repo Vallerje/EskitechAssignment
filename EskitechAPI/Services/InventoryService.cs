@@ -21,7 +21,7 @@ namespace EskitechAPI.Services
         {
             return await _context.Inventories.ToListAsync();
         }
-
+        
         // Method to get an inventory by Id
         public async Task<Inventory> GetInventoryByIdAsync(int id)
         {
@@ -36,10 +36,11 @@ namespace EskitechAPI.Services
                 throw new ArgumentNullException(nameof(inventory), "Inventory cannot be null.");
             }
 
-            // Check if the ProductId exists in the Products table
-            if (!await ProductExistsAsync(inventory.ProductId))
+            // Ensure that the Product exists
+            var productExists = await ProductExistsAsync(inventory.ProductId);
+            if (!productExists)
             {
-                throw new KeyNotFoundException("Product with the given ProductId does not exist.");
+                throw new InvalidOperationException("Product with the given ProductId does not exist.");
             }
 
             _context.Inventories.Add(inventory);
@@ -53,7 +54,7 @@ namespace EskitechAPI.Services
             var inventory = await _context.Inventories.FindAsync(id);
             if (inventory == null)
             {
-                return false; // Inventory not found
+                throw new KeyNotFoundException("Inventory with the given Id does not exist.");
             }
 
             _context.Inventories.Remove(inventory);
