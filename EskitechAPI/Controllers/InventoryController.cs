@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using EskitechAPI.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EskitechAPI.Controllers
 {
@@ -8,56 +10,70 @@ namespace EskitechAPI.Controllers
     public class InventoryController : ControllerBase
     {
         private readonly InventoryService _inventoryService;
-        
+
+        // Constructor to inject InventoryService
         public InventoryController(InventoryService inventoryService)
         {
             _inventoryService = inventoryService;
         }
-        
-        //Hämtar alla inventories
+
+        // GET: api/Inventory
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Inventory>>> GetInventoriesAsync()
         {
-            var products = await _inventoryService.GetInventoriesAsync();
-            return Ok(products);
+            var inventories = await _inventoryService.GetInventoriesAsync();
+            return Ok(inventories);
         }
 
-        // Hämtar inventory genom productId
-        [HttpGet("{productId}")]
-        public async Task<ActionResult<Inventory>> GetInventoryAsync(int productId)
+// GET: api/Inventory/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Inventory>> GetInventoryAsync(int id)
         {
-            var inventory = await _inventoryService.GetInventoryByProductIdAsync(productId);
+            var inventory = await _inventoryService.GetInventoryByIdAsync(id);
 
             if (inventory == null)
             {
-                return NotFound();
+                return NotFound(); // Return 404 if inventory not found
             }
 
             return Ok(inventory);
         }
 
-        
-        // Lägger till ny inventory 
-        [HttpPost]
-        public async Task<ActionResult<Inventory>> PostInventoryAsync(Inventory inventory)
-        {
-            var createdInventory = await _inventoryService.AddInventoryAsync(inventory);
-            return CreatedAtAction(nameof(GetInventoryAsync), new { productId = createdInventory.ProductId },
-                createdInventory);
-        }
-        
 
-        // Tar bort inventory
+// POST: api/Inventory
+        [HttpPost]
+        public async Task<ActionResult<Inventory>> PostInventoryAsync([FromBody] Inventory inventory)
+        {
+            if (inventory == null)
+            {
+                return BadRequest("Inventory cannot be null."); // Return 400 if input is invalid
+            }
+
+            // Check if the ProductId exists in the Products table
+            var productExists = await _inventoryService.ProductExistsAsync(inventory.ProductId);
+            if (!productExists)
+            {
+                return NotFound("Product with the given ProductId does not exist."); // Return 404 if product not found
+            }
+
+            var createdInventory = await _inventoryService.AddInventoryAsync(inventory);
+
+            // Return the created Inventory with a link to its retrieval endpoint
+            return CreatedAtAction(nameof(GetInventoryAsync), new { id = createdInventory.Id }, createdInventory);
+        }
+
+
+        // DELETE: api/Inventory/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInventoryAsync(int id)
         {
             var success = await _inventoryService.DeleteInventoryAsync(id);
             if (!success)
             {
-                return NotFound();
+                return NotFound(); // Return 404 if inventory to delete not found
             }
 
-            return NoContent();
+            return NoContent(); // Return 204 No Content on successful deletion
         }
     }
 }

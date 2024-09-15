@@ -17,7 +17,7 @@ public class EskitechContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder
-            .UseSqlite("Data Source=eskitech.db")
+            .UseSqlite("Data Source=eskitech.db;Foreign Keys=True;")
             .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.NonTransactionalMigrationOperationWarning));
     }
 }

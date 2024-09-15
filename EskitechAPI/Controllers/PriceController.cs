@@ -16,22 +16,22 @@ namespace EskitechAPI.Controllers
         
         //Hämtar alla priser
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetPrices()
+        public async Task<ActionResult<IEnumerable<Product>>> GetPricesAsync()
         {
             var products = await _priceService.GetPricesAsync();
             return Ok(products);
         }
 
 
-        // Hämtar pris genom productId
-        [HttpGet("{productId}")]
-        public async Task<ActionResult<Price>> GetPrice(int productId)
+// GET: api/Price/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Price>> GetPriceByIdAsync(int id)
         {
-            var price = await _priceService.GetPriceByProductIdAsync(productId);
+            var price = await _priceService.GetPriceByIdAsync(id);
 
             if (price == null)
             {
-                return NotFound();
+                return NotFound(); // Return 404 if inventory not found
             }
 
             return Ok(price);
@@ -39,15 +39,15 @@ namespace EskitechAPI.Controllers
 
         // Lägger till nytt pris 
         [HttpPost]
-        public async Task<ActionResult<Price>> PostPrice(Price price)
+        public async Task<ActionResult<Price>> PostPriceAsync(Price price)
         {
             var createdPrice = await _priceService.AddPriceAsync(price);
-            return CreatedAtAction(nameof(GetPrice), new { productId = createdPrice.ProductId }, createdPrice);
+            return CreatedAtAction(nameof(GetPriceByIdAsync), new { productId = createdPrice.ProductId }, createdPrice);
         }
 
         // Tar bort pris
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePrice(int id)
+        public async Task<IActionResult> DeletePriceAsync(int id)
         {
             var success = await _priceService.DeletePriceAsync(id);
             if (!success)

@@ -20,11 +20,12 @@ namespace EskitechAPI.Services
         }
         
         
-        // Hämta pris baserat på produkt-ID
-        public async Task<Price> GetPriceByProductIdAsync(int productId)
+// Method to get an price by Id
+        public async Task<Price> GetPriceByIdAsync(int id)
         {
-            return await _context.Prices.FirstOrDefaultAsync(p => p.ProductId == productId);
+            return await _context.Prices.FindAsync(id);
         }
+
 
         // Lägg till ett nytt pris
         public async Task<Price> AddPriceAsync(Price price)

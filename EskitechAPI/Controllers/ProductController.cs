@@ -16,15 +16,15 @@ namespace EskitechAPI.Controllers
 
         //Hämtar alla produkter
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductsAsync()
         {
             var products = await _productService.GetProductsAsync();
             return Ok(products);
         }
 
-        // Hämtar produkt genom productId
+        // GET: api/Product/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<Product>> GetProductByIdAsync(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
 
@@ -38,15 +38,15 @@ namespace EskitechAPI.Controllers
 
         // Lägger till ny produkt 
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<Product>> PostProductAsync(Product product)
         {
             var createdProduct = await _productService.AddProductAsync(product);
-            return CreatedAtAction(nameof(GetProduct), new { id = createdProduct.Id }, createdProduct);
+            return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createdProduct.Id }, createdProduct);
         }
 
         //uppdaterar befintlig produkt
         /*[HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProductAsync(int id, Product product)
         {
             var success = await _productService.UpdateProductAsync(id, product);
             if (!success)
@@ -59,7 +59,7 @@ namespace EskitechAPI.Controllers
 
         // Tar bort produkt
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProductAsync(int id)
         {
             var success = await _productService.DeleteProductAsync(id);
             if (!success)
