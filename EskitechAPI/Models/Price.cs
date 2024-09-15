@@ -1,9 +1,13 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class Price
 {
-    public int Id { get; set; }
+    
+    [Key, ForeignKey("Product")] // One-to-One: Each product has exactly one price
     public int ProductId { get; set; }
+
     public decimal Amount { get; set; }
-    [ForeignKey("Product")] public virtual Product Product { get; set; }
+
+    public virtual Product Product { get; set; }
 }
