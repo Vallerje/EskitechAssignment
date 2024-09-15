@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using EskitechAPI.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace EskitechAPI.Controllers
 {
@@ -58,7 +60,20 @@ namespace EskitechAPI.Controllers
             try
             {
                 var createdInventory = await _inventoryService.AddInventoryAsync(inventory);
-                return CreatedAtAction(nameof(GetInventoryByIdAsync), new { id = createdInventory.Id }, createdInventory);
+
+                if (createdInventory == null || createdInventory.Id == 0)
+                {
+                    return StatusCode(500, "Error: Failed to create inventory, or inventory ID is invalid.");
+                }
+
+                // Ensure correct ID is passed to CreatedAtAction
+                return CreatedAtAction(nameof(GetInventoryByIdAsync), new { id = createdInventory.Id }, 
+                    new { message = "Inventory created successfully.", inventory = createdInventory });
+            }
+            catch (DbUpdateException ex) when
+                (ex.InnerException is SqliteException sqlEx && sqlEx.SqliteErrorCode == 19)
+            {
+                return Conflict("An inventory for this product already exists.");
             }
             catch (ArgumentNullException ex)
             {
@@ -74,6 +89,8 @@ namespace EskitechAPI.Controllers
             }
         }
 
+
+
         // DELETE: api/Inventory/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInventoryAsync(int id)
@@ -81,7 +98,7 @@ namespace EskitechAPI.Controllers
             try
             {
                 var success = await _inventoryService.DeleteInventoryAsync(id);
-                return NoContent(); // Return 204 No Content on successful deletion
+                return Ok(new { Message = "Inventory successfully deleted." }); // Success message for deletion
             }
             catch (KeyNotFoundException ex)
             {

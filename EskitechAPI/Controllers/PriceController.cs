@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using EskitechAPI.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace EskitechAPI.Controllers
 {
@@ -58,15 +60,20 @@ namespace EskitechAPI.Controllers
             try
             {
                 var createdPrice = await _priceService.AddPriceAsync(price);
-                return CreatedAtAction(nameof(GetPriceByIdAsync), new { id = createdPrice.Id }, createdPrice);
+                return CreatedAtAction(nameof(GetPriceByIdAsync), new { id = createdPrice.Id },
+                    new { message = "Price created successfully.", price = createdPrice });
+            }
+            catch (DbUpdateException ex) when
+                (ex.InnerException is SqliteException sqlEx && sqlEx.SqliteErrorCode == 19)
+            {
+                // SQLite error code 19 indicates a constraint violation
+                return
+                    Conflict(
+                        "A price for this product already exists."); // Return 409 Conflict for unique constraint violations
             }
             catch (ArgumentNullException ex)
             {
                 return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -81,7 +88,7 @@ namespace EskitechAPI.Controllers
             try
             {
                 var success = await _priceService.DeletePriceAsync(id);
-                return NoContent(); // Return 204 No Content on successful deletion
+                return Ok(new { Message = "Price successfully deleted." }); // Success message for deletion
             }
             catch (KeyNotFoundException ex)
             {

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using EskitechAPI.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace EskitechAPI.Controllers
 {
@@ -58,7 +60,8 @@ namespace EskitechAPI.Controllers
             try
             {
                 var createdProduct = await _productService.AddProductAsync(product);
-                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createdProduct.Id }, createdProduct);
+                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createdProduct.Id },
+                    new { message = "Product created successfully.", product = createdProduct });
             }
             catch (ArgumentNullException ex)
             {
@@ -70,7 +73,7 @@ namespace EskitechAPI.Controllers
             }
         }
 
-        // PUT: api/Product/{id}
+        /*// PUT: api/Product/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProductAsync(int id, [FromBody] Product product)
         {
@@ -97,7 +100,7 @@ namespace EskitechAPI.Controllers
             {
                 return StatusCode(500, $"An error occurred while updating the product: {ex.Message}");
             }
-        }
+        }*/
 
         // DELETE: api/Product/{id}
         [HttpDelete("{id}")]
@@ -111,7 +114,7 @@ namespace EskitechAPI.Controllers
                     return NotFound("Product with the given Id does not exist.");
                 }
 
-                return NoContent(); // Return 204 No Content on successful deletion
+                return Ok(new { Message = "Product successfully deleted." }); // Success message for deletion
             }
             catch (KeyNotFoundException ex)
             {

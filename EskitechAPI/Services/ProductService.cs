@@ -17,7 +17,7 @@ namespace EskitechAPI.Services
         {
             return await _context.Products.ToListAsync();
         }
-        
+
         // Method to get a product by Id
         public async Task<Product> GetProductByIdAsync(int id)
         {
@@ -37,7 +37,7 @@ namespace EskitechAPI.Services
             return product;
         }
 
-        // Method to update an existing product
+        /*// Method to update an existing product
         public async Task<bool> UpdateProductAsync(int id, Product product)
         {
             if (id != product.Id)
@@ -60,7 +60,7 @@ namespace EskitechAPI.Services
                 }
                 throw;
             }
-        }
+        }*/
 
         // Method to delete a product by Id
         public async Task<bool> DeleteProductAsync(int id)
